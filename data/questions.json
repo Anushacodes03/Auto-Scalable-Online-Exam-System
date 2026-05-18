@@ -1,0 +1,56 @@
+[
+ {
+   "id":1,
+   "question":"What is DevOps?",
+   "options":["Tool","Culture","Language","Database"],
+   "answer":"Culture"
+ },
+
+ {
+   "id":2,
+   "question":"Docker is used for?",
+   "options":[
+      "Containerization",
+      "Gaming",
+      "Compiler",
+      "Email"
+   ],
+   "answer":"Containerization"
+ },
+
+ {
+   "id":3,
+   "question":"Kubernetes is mainly used for?",
+   "options":[
+      "Photo Editing",
+      "Container Orchestration",
+      "Programming",
+      "Database"
+   ],
+   "answer":"Container Orchestration"
+ },
+
+ {
+   "id":4,
+   "question":"Jenkins is used for?",
+   "options":[
+      "CI/CD",
+      "Browser",
+      "Database",
+      "Antivirus"
+   ],
+   "answer":"CI/CD"
+ },
+
+ {
+   "id":5,
+   "question":"Prometheus collects?",
+   "options":[
+      "Metrics",
+      "Videos",
+      "Passwords",
+      "Images"
+   ],
+   "answer":"Metrics"
+ }
+]
