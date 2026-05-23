@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: onlineexam-deployment
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: onlineexam
+
+  template:
+    metadata:
+      labels:
+        app: onlineexam
+
+    spec:
+      containers:
+      - name: onlineexam
+        image: onlineexam:latest
+        imagePullPolicy: IfNotPresent
+
+        ports:
+        - containerPort: 4173

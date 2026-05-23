@@ -1,93 +1,219 @@
-const express=require("express");
-const cors=require("cors");
-const fs=require("fs");
+const express = require("express");
+const cors = require("cors");
+const fs = require("fs");
+const path = require("path");
 
-const app=express();
+// Optional metrics support
+// npm install express-prom-bundle
+let promBundle;
+try {
+    promBundle = require("express-prom-bundle");
+} catch {
+    promBundle = null;
+}
+
+const app = express();
 
 app.use(express.json());
 app.use(cors());
 
-app.get("/",(req,res)=>{
 
-res.send("Server Running")
+// Metrics middleware (optional)
+if (promBundle) {
+    const metricsMiddleware = promBundle({
+        includeMethod: true,
+        includePath: true
+    });
 
-});
-
-app.post("/login",(req,res)=>{
-
-const {username,password}=req.body;
-
-const users=JSON.parse(
-fs.readFileSync("../data/students.json")
-);
-
-const found=users.find(
-u=>u.username===username &&
-u.password===password
-);
-
-if(found){
-
-res.json({
-success:true
-})
-
+    app.use(metricsMiddleware);
 }
 
-else{
 
-res.json({
-success:false
-})
-
-}
-
-});
-app.get("/questions",(req,res)=>{
-
-const questions=JSON.parse(
-fs.readFileSync("../data/questions.json")
+// File paths
+const studentsPath = path.join(
+    __dirname,
+    "../data/students.json"
 );
 
-res.json(questions);
-
-});
-app.post("/submit",(req,res)=>{
-
-const {name,score}=req.body;
-
-const results=JSON.parse(
-fs.readFileSync("../data/results.json")
+const questionsPath = path.join(
+    __dirname,
+    "../data/questions.json"
 );
 
-results.push({
-name,
-score
-});
-
-fs.writeFileSync(
-"../data/results.json",
-JSON.stringify(results,null,2)
+const resultsPath = path.join(
+    __dirname,
+    "../data/results.json"
 );
 
-res.json({
-message:"Result Saved"
-});
+
+// Home route
+app.get("/", (req, res) => {
+
+    res.send("Server Running");
 
 });
-app.get("/results",(req,res)=>{
 
-const results=JSON.parse(
-fs.readFileSync("../data/results.json")
-);
 
-res.json(results);
+// Login route
+app.post("/login", (req, res) => {
+
+    try {
+
+        const { username, password } = req.body;
+
+        const users = JSON.parse(
+            fs.readFileSync(
+                studentsPath,
+                "utf8"
+            )
+        );
+
+        const found = users.find(
+            u =>
+                u.username === username &&
+                u.password === password
+        );
+
+        if (found) {
+
+            res.json({
+                success: true
+            });
+
+        } else {
+
+            res.json({
+                success: false
+            });
+
+        }
+
+    } catch (err) {
+
+        console.log(err);
+
+        res.status(500).json({
+            success: false,
+            message: "Login error"
+        });
+
+    }
 
 });
-app.listen(5000,()=>{
 
-console.log(
-"Server running on port 5000"
-)
 
-})
+// Questions route
+app.get("/questions", (req, res) => {
+
+    try {
+
+        const questions = JSON.parse(
+            fs.readFileSync(
+                questionsPath,
+                "utf8"
+            )
+        );
+
+        res.json(questions);
+
+    } catch (err) {
+
+        console.log(err);
+
+        res.status(500).json({
+            message: "Error loading questions"
+        });
+
+    }
+
+});
+
+
+// Submit results
+app.post("/submit", (req, res) => {
+
+    try {
+
+        const { name, score } = req.body;
+
+        let results = [];
+
+        if (fs.existsSync(resultsPath)) {
+
+            results = JSON.parse(
+                fs.readFileSync(
+                    resultsPath,
+                    "utf8"
+                )
+            );
+
+        }
+
+        results.push({
+            name,
+            score
+        });
+
+        fs.writeFileSync(
+            resultsPath,
+            JSON.stringify(
+                results,
+                null,
+                2
+            )
+        );
+
+        res.json({
+            message: "Result Saved"
+        });
+
+    } catch (err) {
+
+        console.log(err);
+
+        res.status(500).json({
+            message: "Error saving result"
+        });
+
+    }
+
+});
+
+
+// Results route
+app.get("/results", (req, res) => {
+
+    try {
+
+        const results = JSON.parse(
+            fs.readFileSync(
+                resultsPath,
+                "utf8"
+            )
+        );
+
+        res.json(results);
+
+    } catch (err) {
+
+        console.log(err);
+
+        res.status(500).json({
+            message: "Error loading results"
+        });
+
+    }
+
+});
+
+
+// Server start
+const PORT = 5000;
+
+app.listen(PORT, () => {
+
+    console.log(
+        `Server running on port ${PORT}`
+    );
+
+});
