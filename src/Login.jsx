@@ -1,78 +1,86 @@
-import {useState} from "react";
+import { useState } from "react";
 import axios from "axios";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-function Login(){
+function Login() {
 
-const [username,setUsername]=useState("");
-const [password,setPassword]=useState("");
+  const [username,setUsername]=useState("");
+  const [password,setPassword]=useState("");
 
-const navigate=useNavigate();
+  const navigate=useNavigate();
 
-const login=async()=>{
+  const login=async()=>{
 
-try{
+    try{
 
-const res=await axios.post(
-"http://3.109.62.17:5000",
-{
-username,
-password
-}
-);
+      const res=await axios.post(
+        "http://3.109.62.17:5000/login",
+        {
+          username,
+          password
+        }
+      );
 
-if(res.data.success){
+      if(res.data.success){
 
-alert("Login Success");
+        alert("Login Success");
 
-navigate("/exam");
+        navigate("/exam");
 
-}
+      }
 
-else{
+      else{
 
-alert("Invalid credentials");
+        alert("Invalid credentials");
 
-}
+      }
 
-}
+    }
 
-catch{
+    catch(err){
 
-alert("Backend not running");
+      console.log(err);
 
-}
+      alert("Backend connection error");
 
-};
+    }
 
-return(
+  };
 
-<div>
+  return(
 
-<h1>Online Exam Login</h1>
+    <div>
 
-<input
-placeholder="Username"
-onChange={(e)=>setUsername(e.target.value)}
-/>
+      <h1>
+        Online Exam Login
+      </h1>
 
-<br/><br/>
+      <input
+      placeholder="Username"
+      value={username}
+      onChange={(e)=>
+      setUsername(e.target.value)}
+      />
 
-<input
-type="password"
-placeholder="Password"
-onChange={(e)=>setPassword(e.target.value)}
-/>
+      <br/><br/>
 
-<br/><br/>
+      <input
+      type="password"
+      placeholder="Password"
+      value={password}
+      onChange={(e)=>
+      setPassword(e.target.value)}
+      />
 
-<button onClick={login}>
-Login
-</button>
+      <br/><br/>
 
-</div>
+      <button onClick={login}>
+      Login
+      </button>
 
-)
+    </div>
+
+  );
 
 }
 
