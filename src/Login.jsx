@@ -14,7 +14,7 @@ const login=async()=>{
 try{
 
 const res=await axios.post(
-"http://localhost:5000/login",
+"http://3.109.62.17:5000/login",
 {
 username,
 password
