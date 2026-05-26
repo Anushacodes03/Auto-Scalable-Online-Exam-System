@@ -13,7 +13,7 @@ const navigate=useNavigate();
 useEffect(()=>{
 
 axios.get(
-"http://localhost:5000/questions"
+"http://3.109.62.17:5000"
 )
 .then(res=>{
 
@@ -97,7 +97,7 @@ answered-correct;
 const score=correct;
 
 await axios.post(
-"http://localhost:5000/submit",
+"http://3.109.62.17:5000",
 {
 name:"Anusha",
 score

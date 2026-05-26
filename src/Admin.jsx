@@ -8,7 +8,7 @@ const [results,setResults]=useState([]);
 useEffect(()=>{
 
 axios.get(
-"http://localhost:5000/results"
+"http://3.109.62.17:5000"
 )
 .then((res)=>{
 
