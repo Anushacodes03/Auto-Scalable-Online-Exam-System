@@ -82,9 +82,7 @@ app.post("/login", (req, res) => {
                 success: true
             });
 
-        }
-
-        else {
+        } else {
 
             res.json({
                 success: false
@@ -92,9 +90,7 @@ app.post("/login", (req, res) => {
 
         }
 
-    }
-
-    catch (err) {
+    } catch (err) {
 
         console.log(err);
 
@@ -127,9 +123,7 @@ app.get("/questions", (req, res) => {
             questions
         );
 
-    }
-
-    catch (err) {
+    } catch (err) {
 
         console.log(err);
 
@@ -196,9 +190,7 @@ app.post("/submit", (req, res) => {
 
         });
 
-    }
-
-    catch (err) {
+    } catch (err) {
 
         console.log(err);
 
@@ -241,9 +233,7 @@ app.get("/results", (req, res) => {
 
         res.json(results);
 
-    }
-
-    catch (err) {
+    } catch (err) {
 
         console.log(err);
 
@@ -263,15 +253,12 @@ app.get("/results", (req, res) => {
 // Start Server
 // ==========================
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
-app.listen(
-    PORT,
-    () => {
+app.listen(PORT, () => {
 
-        console.log(
-            `Server running on port ${PORT}`
-        );
+    console.log(
+        `Server running on port ${PORT}`
+    );
 
-    }
-);
+});
