@@ -2,15 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
-
-// Optional metrics support
-// npm install express-prom-bundle
-let promBundle;
-try {
-    promBundle = require("express-prom-bundle");
-} catch {
-    promBundle = null;
-}
+const promBundle = require("express-prom-bundle");
 
 const app = express();
 
@@ -18,18 +10,22 @@ app.use(express.json());
 app.use(cors());
 
 
-// Metrics middleware (optional)
-if (promBundle) {
-    const metricsMiddleware = promBundle({
-        includeMethod: true,
-        includePath: true
-    });
+// ==========================
+// Prometheus Metrics
+// ==========================
 
-    app.use(metricsMiddleware);
-}
+const metricsMiddleware = promBundle({
+    includeMethod: true,
+    includePath: true
+});
+
+app.use(metricsMiddleware);
 
 
-// File paths
+// ==========================
+// File Paths
+// ==========================
+
 const studentsPath = path.join(
     __dirname,
     "../data/students.json"
@@ -46,7 +42,10 @@ const resultsPath = path.join(
 );
 
 
-// Home route
+// ==========================
+// Home Route
+// ==========================
+
 app.get("/", (req, res) => {
 
     res.send("Server Running");
@@ -54,7 +53,10 @@ app.get("/", (req, res) => {
 });
 
 
-// Login route
+// ==========================
+// Login
+// ==========================
+
 app.post("/login", (req, res) => {
 
     try {
@@ -80,7 +82,9 @@ app.post("/login", (req, res) => {
                 success: true
             });
 
-        } else {
+        }
+
+        else {
 
             res.json({
                 success: false
@@ -88,13 +92,15 @@ app.post("/login", (req, res) => {
 
         }
 
-    } catch (err) {
+    }
+
+    catch (err) {
 
         console.log(err);
 
         res.status(500).json({
             success: false,
-            message: "Login error"
+            message: "Login Error"
         });
 
     }
@@ -102,7 +108,10 @@ app.post("/login", (req, res) => {
 });
 
 
-// Questions route
+// ==========================
+// Questions
+// ==========================
+
 app.get("/questions", (req, res) => {
 
     try {
@@ -114,14 +123,19 @@ app.get("/questions", (req, res) => {
             )
         );
 
-        res.json(questions);
+        res.json(
+            questions
+        );
 
-    } catch (err) {
+    }
+
+    catch (err) {
 
         console.log(err);
 
         res.status(500).json({
-            message: "Error loading questions"
+            message:
+            "Error loading questions"
         });
 
     }
@@ -129,7 +143,10 @@ app.get("/questions", (req, res) => {
 });
 
 
-// Submit results
+// ==========================
+// Submit Result
+// ==========================
+
 app.post("/submit", (req, res) => {
 
     try {
@@ -138,41 +155,58 @@ app.post("/submit", (req, res) => {
 
         let results = [];
 
-        if (fs.existsSync(resultsPath)) {
+        if (
+            fs.existsSync(resultsPath)
+        ) {
 
             results = JSON.parse(
+
                 fs.readFileSync(
                     resultsPath,
                     "utf8"
                 )
+
             );
 
         }
 
         results.push({
+
             name,
             score
+
         });
 
         fs.writeFileSync(
+
             resultsPath,
+
             JSON.stringify(
                 results,
                 null,
                 2
             )
+
         );
 
         res.json({
-            message: "Result Saved"
+
+            message:
+            "Result Saved"
+
         });
 
-    } catch (err) {
+    }
+
+    catch (err) {
 
         console.log(err);
 
         res.status(500).json({
-            message: "Error saving result"
+
+            message:
+            "Error Saving Result"
+
         });
 
     }
@@ -180,26 +214,44 @@ app.post("/submit", (req, res) => {
 });
 
 
-// Results route
+// ==========================
+// Results
+// ==========================
+
 app.get("/results", (req, res) => {
 
     try {
 
-        const results = JSON.parse(
-            fs.readFileSync(
-                resultsPath,
-                "utf8"
-            )
-        );
+        let results = [];
+
+        if (
+            fs.existsSync(resultsPath)
+        ) {
+
+            results = JSON.parse(
+
+                fs.readFileSync(
+                    resultsPath,
+                    "utf8"
+                )
+
+            );
+
+        }
 
         res.json(results);
 
-    } catch (err) {
+    }
+
+    catch (err) {
 
         console.log(err);
 
         res.status(500).json({
-            message: "Error loading results"
+
+            message:
+            "Error loading results"
+
         });
 
     }
@@ -207,13 +259,19 @@ app.get("/results", (req, res) => {
 });
 
 
-// Server start
+// ==========================
+// Start Server
+// ==========================
+
 const PORT = 5000;
 
-app.listen(PORT, () => {
+app.listen(
+    PORT,
+    () => {
 
-    console.log(
-        `Server running on port ${PORT}`
-    );
+        console.log(
+            `Server running on port ${PORT}`
+        );
 
-});
+    }
+);
